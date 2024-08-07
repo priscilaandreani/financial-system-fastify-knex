@@ -18,8 +18,8 @@ server.get('/hello', async () => {
 
 server
   .listen({
-    port: 3333
+    port: process.env.PORT
   })
   .then(() => {
-    console.log('HTTP Server is running on port 3333');
+    console.log(`HTTP Server is running on port ${process.env.PORT}`);
   });
