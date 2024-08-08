@@ -10,6 +10,21 @@ export async function transactionsRoutes(app: FastifyInstance) {
     return { transactions };
   });
 
+  app.get('/:id', async (req, res) => {
+    const getTransactionParamsSchema = z.object({
+      id: z.string().uuid()
+    });
+
+    const { id } = getTransactionParamsSchema.parse(req.params);
+
+    const transaction = await knex('transactions')
+      .select('*')
+      .where('id', id)
+      .first();
+
+    return { transaction };
+  });
+
   app.post('/', async (req, res) => {
     const createTransactionBodySchema = z.object({
       title: z.string(),
