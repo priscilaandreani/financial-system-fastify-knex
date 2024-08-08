@@ -4,8 +4,16 @@ import { knex } from '../database';
 import crypto from 'node:crypto';
 
 export async function transactionsRoutes(app: FastifyInstance) {
-  app.get('/', async () => {
-    const transactions = await knex('transactions').select('*');
+  app.get('/', async (req, res) => {
+    const sessionId = req.cookies.sessionId;
+
+    if (!sessionId) {
+      return res.status(401).send('Unauthorized.');
+    }
+
+    const transactions = await knex('transactions')
+      .where('session_id', sessionId)
+      .select('*');
 
     return { transactions };
   });
@@ -46,10 +54,13 @@ export async function transactionsRoutes(app: FastifyInstance) {
     let sessionId = req.cookies.sessionId;
 
     if (!sessionId) {
+      const SEVEN_DAYS = 60 * 60 * 24 * 7;
+
       sessionId = crypto.randomUUID();
+
       res.cookie('sessionId', sessionId, {
         path: '/',
-        maxAge: 60 * 60 * 24 * 7 // 7 days
+        maxAge: SEVEN_DAYS
       });
     }
 
