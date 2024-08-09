@@ -3,6 +3,7 @@
 - Fastify
 - Knex
 - SQLite
+- Vitest
 
 ### Functional Requirements
 
