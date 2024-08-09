@@ -10,10 +10,14 @@ app.register(transactionsRoutes, {
   prefix: '/transactions'
 });
 
-app
-  .listen({
+app.listen(
+  {
     port: process.env.PORT
-  })
-  .then(() => {
-    console.log(`HTTP Server is running on port ${process.env.PORT}`);
-  });
+  },
+  (err, address) => {
+    if (err) {
+      console.error(err);
+    }
+    console.log(`Server listening at ${address}`);
+  }
+);
