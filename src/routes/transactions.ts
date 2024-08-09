@@ -2,46 +2,63 @@ import { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { knex } from '../database';
 import crypto from 'node:crypto';
+import { checkSessionId } from '../middlewares/check-session-id';
 
 export async function transactionsRoutes(app: FastifyInstance) {
-  app.get('/', async (req, res) => {
-    const sessionId = req.cookies.sessionId;
+  app.get(
+    '/',
+    {
+      preHandler: [checkSessionId]
+    },
+    async (req) => {
+      const { sessionId } = req.cookies;
 
-    if (!sessionId) {
-      return res.status(401).send('Unauthorized.');
+      const transactions = await knex('transactions')
+        .where('session_id', sessionId)
+        .select('*');
+
+      return { transactions };
     }
+  );
 
-    const transactions = await knex('transactions')
-      .where('session_id', sessionId)
-      .select('*');
+  app.get(
+    '/:id',
+    {
+      preHandler: [checkSessionId]
+    },
+    async (req) => {
+      const getTransactionParamsSchema = z.object({
+        id: z.string().uuid()
+      });
 
-    return { transactions };
-  });
+      const { id } = getTransactionParamsSchema.parse(req.params);
 
-  app.get('/:id', async (req) => {
-    const getTransactionParamsSchema = z.object({
-      id: z.string().uuid()
-    });
+      const transaction = await knex('transactions')
+        .select('*')
+        .where({ session_id: req.cookies.sessionId, id })
+        // it can be .where('id', id).andWhere('session_id', req.cookies.sessionId)
+        .first();
 
-    const { id } = getTransactionParamsSchema.parse(req.params);
+      return { transaction };
+    }
+  );
 
-    const transaction = await knex('transactions')
-      .select('*')
-      .where('id', id)
-      .first();
+  app.get(
+    '/summary',
+    {
+      preHandler: [checkSessionId]
+    },
+    async (req) => {
+      const summary = await knex('transactions')
+        .where('session_id', req.cookies.sessionId)
+        .sum('amount', {
+          as: 'total'
+        })
+        .first();
 
-    return { transaction };
-  });
-
-  app.get('/summary', async () => {
-    const summary = await knex('transactions')
-      .sum('amount', {
-        as: 'total ammount'
-      })
-      .first();
-
-    return { summary };
-  });
+      return { summary };
+    }
+  );
 
   app.post('/', async (req, res) => {
     const createTransactionBodySchema = z.object({
