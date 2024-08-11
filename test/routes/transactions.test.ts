@@ -11,15 +11,15 @@ afterAll(async () => {
 });
 
 describe('Transactions routes', () => {
-  it.only('should be able to create a transaction', async () => {
-    const req = await request(app.server).post('/transactions').send({
-      title: 'burger',
-      amount: 1300,
-      type: 'credit'
-    });
-    // .expect(201);
-
-    console.log(req);
+  it('should be able to create a transaction', async () => {
+    await request(app.server)
+      .post('/transactions')
+      .send({
+        title: 'burger',
+        amount: 1300,
+        type: 'credit'
+      })
+      .expect(201);
   });
 
   it('should be able to get all transactions', async () => {
@@ -32,7 +32,6 @@ describe('Transactions routes', () => {
       });
 
     const cookies = createTransactionRes.headers['set-cookie'];
-    console.log(cookies);
 
     await request(app.server)
       .get('/transactions')
