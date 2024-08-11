@@ -6,7 +6,8 @@
   "scripts": {
     "test": "./script.sh test",
     "dev": "tsx watch --env-file .env src/server.ts",
-    "knex": "node --import tsx  ./node_modules/.bin/knex"
+    "knex": "node --import tsx  ./node_modules/.bin/knex",
+    "build": "tsup src"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +20,7 @@
     "globals": "^15.9.0",
     "prettier": "3.3.3",
     "supertest": "^7.0.0",
+    "tsup": "^8.2.4",
     "tsx": "^4.16.5",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.0.1",
