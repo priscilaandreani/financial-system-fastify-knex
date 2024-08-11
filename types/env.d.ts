@@ -4,7 +4,7 @@ declare global {
       DATABASE_URL: string;
       NODE_ENV: 'development' | 'production' | 'test';
       PORT: number;
-      DATABASE_CLIENT: 'pg' | 'sqlite';
+      DATABASE_CLIENT: pg | sqlite;
     }
   }
 }

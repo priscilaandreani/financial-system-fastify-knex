@@ -4,7 +4,8 @@ import { knex as knexSetup, Knex } from 'knex';
 export const config: Knex.Config = {
   client: process.env.DATABASE_CLIENT,
   connection:
-    process.env.DATABASE_CLIENT === 'pg'
+    //prettier-ignore
+    process.env.DATABASE_CLIENT === "pg"
       ? process.env.DATABASE_URL
       : {
           filename: process.env.DATABASE_URL
@@ -15,5 +16,7 @@ export const config: Knex.Config = {
     directory: './tmp/migrations'
   }
 };
+
+console.log(config);
 
 export const knex = knexSetup(config);
