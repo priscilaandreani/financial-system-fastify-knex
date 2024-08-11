@@ -55,11 +55,16 @@ describe('Transactions routes', () => {
       });
 
     const cookies = createTransactionRes.headers['set-cookie'];
-    console.log(createTransactionRes);
+
+    const transactions = await request(app.server)
+      .get('/transactions')
+      .set('Cookie', cookies);
+
+    const transactionId = transactions.body.transactions[0].id;
 
     await request(app.server)
-      .delete(`/transactions/${createTransactionRes}`)
-      .set('Cookie', cookies);
-    // .expect(204);
+      .delete(`/transactions/${transactionId}`)
+      .set('Cookie', cookies)
+      .expect(204);
   });
 });
